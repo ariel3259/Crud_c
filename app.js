@@ -2,7 +2,9 @@ const express=require('express');
 const mysql= require('mysql');
 const cors=require('cors');
 const app=express();
-app.use(express,cors);
+app.use(express.json());
+app.use(cors);
+
 
 //conexion a mysql
 const con= mysql.createConnection({
@@ -13,7 +15,7 @@ database:'enc'
 });
 
 
-app.get('/',(req,res)=>res.send('<h1>ruta inicio</h1>'));
+app.get('/',(req,res)=>res.send('<h1>Ruta Inicio</h1>'))
 //crear cuestionario
 app.post('/api/cuestionarios',(req,res)=>{
 let data={
@@ -21,11 +23,11 @@ let data={
 	fecha:req.body.fecha,
 	usuario:req.body.usuario,
 	descripcion:req.body.descripcion
-}
+};
 let sql="insert into cuestionario set ?";
 con.query(sql,data,err=>{
 	if(err)throw err;
-	alert("Cuestionario guardado");
+	res.send(data);
 });
 });
 
@@ -78,7 +80,7 @@ app.post('/api/preguntas',(req,res)=>{
 	let sql="insert into preguntas set ?";
 	con.query(sql,data,err=>{
 		if(err)throw err;
-		alert("Pregunta guardada");
+		res.send(data);
 	});
 	});
 	
@@ -95,7 +97,7 @@ app.post('/api/preguntas',(req,res)=>{
 	app.get('/api/preguntas/:id',(req,res)=>{
 		con.query(`select * from preguntas where idpregunta=?`,[req.params.id],(err,fila)=>{
 			if(err)throw err;
-			alert(dila);
+			res.send(fila);
 		});
 	});
 	
@@ -106,7 +108,7 @@ app.post('/api/preguntas',(req,res)=>{
 		let pregunta=req.body.pregunta;
 		con.query('update preguntas set descripcion=?,pregunta=? where id=?',[descripcion,pregunta,id],(err,result)=>{
 			if(err)throw err;
-			alert(result);
+			res.send(result);
 		});
 	});
 	
@@ -114,8 +116,10 @@ app.post('/api/preguntas',(req,res)=>{
 	app.delete('/api/cuestionarios/:id',(req,res)=>{
 		con.query('delete from preguntas where id=?',[req.params.id],err=>{
 			if(err)throw err;
-			alert("pregunta eliminada")
+			res.send('pregunta eliminada');
 		});
 	});
-
-	app.listen('3000',()=>console.log("Server encendido"));
+	app.listen('3000',err=>{
+		if(err) throw err;
+		console.log ('Funciona');
+	});
