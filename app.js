@@ -122,7 +122,8 @@ app.post('/api/preguntas',(req,res)=>{
 			res.send('pregunta eliminada');
 		});
 	});
-	app.listen('3000',err=>{
+	app.set("port",process.env.PORT|| 3000);
+	app.listen(app.get("port"),err=>{
 		if(err) throw err;
 		console.log ('Funciona');
 	});
