@@ -7,13 +7,16 @@ app.use(cors);
 
 
 //conexion a mysql
-const con= mysql.createConnection({
+var con= mysql.createConnection({
 	host:'localhost',
 user:'root',
 password:'',
 database:'enc'
 });
-
+con.connect(err=>{
+	if(err) throw err;
+	console.log("Usted esta conectado a la base de datos");
+})
 
 app.get('/',(req,res)=>res.send('<h1>Ruta Inicio</h1>'))
 //crear cuestionario
