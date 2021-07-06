@@ -1,9 +1,13 @@
+//agregando los modulos necesarios para el proyecto, en este caso, son: express, cors y mysql
 const express=require('express');
 const mysql= require('mysql');
 const cors=require('cors');
+
+//
 const app=express();
 app.use(express.json());
 app.use(cors());
+
 app.set("port",process.env.PORT || 3000);
 
 //conexion a mysql
@@ -18,7 +22,8 @@ con.connect(err=>{
 	console.log("Usted esta conectado a la base de datos");
 })
 
-app.get('/',(req,res)=>res.send('<h1>Ruta Inicio</h1>'))
+app.get('/',(req,res)=>res.send('<h1>Ruta Inicio</h1>'));
+
 //crear cuestionario
 app.post('/api/cuestionarios/create',(req,res)=>{
 let data={
@@ -72,56 +77,7 @@ app.delete('/api/cuestionarios/delete/:id',(req,res)=>{
 });
 
 
-// PREGUNTAS 
 
-//crear pregunta
-app.post('/api/preguntas/create',(req,res)=>{
-	let data={
-		descripcion:req.body.descripcion,
-		pregunta:req.body.pregunta
-	}
-	let sql="insert into preguntas set ?";
-	con.query(sql,data,err=>{
-		if(err)throw err;
-		res.send(data);
-	});
-	});
-	
-	//mostrar todas las preguntas
-	app.get('/api/preguntas/read',(req,res)=>{
-	con.query('select * from preguntas',(err,filas)=>{
-	if(err)throw err;
- res.send(filas);
-	});
-	});
-	
-	
-	//mostrar una pregunta
-	app.get('/api/preguntas/read/:id',(req,res)=>{
-		con.query(`select * from preguntas where idpregunta=?`,[req.params.id],(err,fila)=>{
-			if(err)throw err;
-			res.send(fila);
-		});
-	});
-	
-	//Editar una pregunta
-	app.put('/api/preguntas/modify/:id',(res,req)=>{
-		let id=req.params.id;
-		let descripcion=req.body.descripcion;
-		let pregunta=req.body.pregunta;
-		con.query('update preguntas set descripcion=?,pregunta=? where id=?',[descripcion,pregunta,id],(err,result)=>{
-			if(err)throw err;
-			res.send(result);
-		});
-	});
-	
-	//Borrar una pregunta
-	app.delete('/api/cuestionarios/delete/:id',(req,res)=>{
-		con.query('delete from preguntas where id=?',[req.params.id],err=>{
-			if(err)throw err;
-			res.send('pregunta eliminada');
-		});
-	});
 	
 	app.listen(app.get("port"),err=>{
 		if(err) throw err;

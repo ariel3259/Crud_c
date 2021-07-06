@@ -1,0 +1,54 @@
+// PREGUNTAS 
+
+//crear pregunta
+app.post('/api/cuestionarios/preguntas/create',(req,res)=>{
+	let data={
+		descripcion:req.body.descripcion,
+		pregunta:req.body.pregunta
+	}
+	let sql="insert into preguntas set ?";
+	con.query(sql,data,err=>{
+		if(err)throw err;
+		res.send(data);
+	});
+	});
+	
+	//mostrar todas las preguntas
+	
+	// preguntas va d
+/*
+	app.get('/api/cuestionarios/preguntas/read',(req,res)=>{
+	con.query('select * from preguntas',(err,filas)=>{
+	if(err)throw err;
+ res.send(filas);
+	});
+	});
+	
+	
+	//mostrar una pregunta
+	app.get('/api/cuesionarios/preguntas/read/:id',(req,res)=>{
+		con.query(`select * from preguntas where idpregunta=?`,[req.params.id],(err,fila)=>{
+			if(err)throw err;
+			res.send(fila);
+		});
+	});
+	*/
+
+	//Editar una pregunta
+	app.put('/api/preguntas/modify/:id',(res,req)=>{
+		let id=req.params.id;
+		let descripcion=req.body.descripcion;
+		let pregunta=req.body.pregunta;
+		con.query('update preguntas set descripcion=?,pregunta=? where id=?',[descripcion,pregunta,id],(err,result)=>{
+			if(err)throw err;
+			res.send(result);
+		});
+	});
+	
+	//Borrar una pregunta
+	app.delete('/api/cuestionarios//delete/:id',(req,res)=>{
+		con.query('delete from preguntas where id=?',[req.params.id],err=>{
+			if(err)throw err;
+			res.send('pregunta eliminada');
+		});
+	});
