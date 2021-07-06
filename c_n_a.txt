@@ -52,3 +52,4 @@ app.post('/api/cuestionarios/preguntas/create',(req,res)=>{
 			res.send('pregunta eliminada');
 		});
 	});
+	

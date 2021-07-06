@@ -11,7 +11,7 @@ app.use(cors());
 app.set("port",process.env.PORT || 3000);
 
 //conexion a mysql
-var con= mysql.createConnection({
+const con= mysql.createConnection({
 	host:'localhost',
 user:'root',
 password:'',
@@ -23,62 +23,74 @@ con.connect(err=>{
 })
 
 app.get('/',(req,res)=>res.send('<h1>Ruta Inicio</h1>'));
-
 //crear cuestionario
-app.post('/api/cuestionarios/create',(req,res)=>{
-let data={
-		idcuestionario:req.body.idcuestionario,
-	fechaCreacion:req.body.fecha,
-	usuarioCreador:req.body.usuario,
-	descripcion:req.body.descripcion
-};
-let sql="insert into cuestionarios set ?";
-con.query(sql,data,err=>{
-	if(err)throw err;
-	res.send(data);
-});
-});
+function crearCuestionario(id,fecha,usuario,des){
+	app.post('/api/cuestionarios/create',(req,res)=>{
+		const data={
+			idcuestionario:id,
+			fechaCreacion:fecha,
+			usuarioCreador:usuario,
+			descripcion:des
+		};
+		const sql="insert into cuestionarios set ?";
+		con.query(sql,data,err=>{
+			if(err)throw err;
+			res.send(data);
+		});
+		});
+}
 
 //mostrar todos los cuestionarios
-app.get('/api/cuestionarios/read',(req,res)=>{
-con.query('select * from cuestionarios',(err,filas)=>{
-if(err)throw err;
-res.send(filas);
-});
-});
-
-
-//mostrar un cuestionario
-app.get('/api/cuestionarios/read/:id',(req,res)=>{
-	con.query(`select * from cuestionarios where idcuestionario=?`,[req.params.id],(err,fila)=>{
+function mostrarTodosLosCuestionarios(){
+	app.get('/api/cuestionarios/read',(req,res)=>{
+		con.query('select * from cuestionarios',(err,filas)=>{
 		if(err)throw err;
-		res.send(fila);
-	});
-});
+		res.send(filas);
+		return filas;
+		});
+		});
+}
 
-//Editar un cuestionario
-app.put('/api/cuestionarios/modify/:id',(res,req)=>{
-	let id=req.params.id;
-	let descripcion=req.body.descripcion;
-	let fechaCreacion=req.body.fecha;
-	let usuarioCreador=req.body.usuario;
-	con.query('update cuestionarios set descripcion=?,fechaCreacion=?,usuarioCreador=? where idcuestionario=?',[descripcion,fechaCreacion,usuarioCreador,id],(err,result)=>{
-		if(err)throw err;
-		res.send(result);
+
+//mostrar un cuestionario.  en caso de que no funcione la url nueva /api/cuestionarios/read/:id
+function mostrarUnCuestionario(id){
+	app.get(`/api/cuestionarios/read/:${id}`,(req,res)=>{
+		con.query(`select * from cuestionarios where idcuestionario=?`,[req.params.id],(err,fila)=>{
+			if(err)throw err;
+			res.send(fila);
+			return fila;
+		});
 	});
-});
+}
+
+//Editar un cuestionario.Remplazar data por  [descripcion,fechaCreacion,usuarioCreador,idcuestionario] en caso de que la modificacion no funcione
+function modificarUnCuestionario(id,des,fecha,usuario){
+	app.put(`/api/cuestionarios/modify/:${id}`,(res,req)=>{
+		const data={
+			 descripcion=des,
+			 fechaCreacion=fecha,
+			 usuarioCreador=usuario,
+			 id=id
+		}
+		con.query('update cuestionarios set descripcion=?,fechaCreacion=?,usuarioCreador=? where idcuestionario=?',data,(err,result)=>{
+			if(err)throw err;
+			res.send(result);
+			return result;
+		});
+	});
+}
 
 //Borrar un cuestionario
-app.delete('/api/cuestionarios/delete/:id',(req,res)=>{
-	con.query('delete from cuestionarios where id=?',[req.params.id],err=>{
-		if(err)throw err;
-		res.send("Articulo Eliminado");
+function borrarUnCuestionario(id){
+	app.delete(`/api/cuestionarios/delete/:${id}`,(req,res)=>{
+		con.query('delete from cuestionarios where id=?',[req.params.id],err=>{
+			if(err)throw err;
+			res.send("Articulo Eliminado");
+		});
 	});
-});
+}
 
 
-
-	
 	app.listen(app.get("port"),err=>{
 		if(err) throw err;
 		console.log (`Funciona en el puerto: 3000`);
