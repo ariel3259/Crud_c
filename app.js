@@ -3,8 +3,8 @@ const mysql= require('mysql');
 const cors=require('cors');
 const app=express();
 app.use(express.json());
-app.use(cors);
-
+app.use(cors(),express());
+app.set("port",process.env.PORT || 3000);
 
 //conexion a mysql
 var con= mysql.createConnection({
@@ -23,11 +23,11 @@ app.get('/',(req,res)=>res.send('<h1>Ruta Inicio</h1>'))
 app.post('/api/cuestionarios',(req,res)=>{
 let data={
 		idcuestionario:req.body.idcuestionario,
-	fecha:req.body.fecha,
-	usuario:req.body.usuario,
+	fechaCreacion:req.body.fecha,
+	usuarioCreador:req.body.usuario,
 	descripcion:req.body.descripcion
 };
-let sql="insert into cuestionario set ?";
+let sql="insert into cuestionarios set ?";
 con.query(sql,data,err=>{
 	if(err)throw err;
 	res.send(data);
@@ -55,9 +55,9 @@ app.get('/api/cuestionarios/:id',(req,res)=>{
 app.put('/api/cuestionarios/:id',(res,req)=>{
 	let id=req.params.id;
 	let descripcion=req.body.descripcion;
-	let fecha=req.body.fecha;
-	let usuario=req.body.usuario;
-	con.query('update cuestionarios set descripcion=?,fecha=?,usuario=? where id=?',[descripcion,fecha,usuario,id],(err,result)=>{
+	let fechaCreacion=req.body.fecha;
+	let usuarioCreador=req.body.usuario;
+	con.query('update cuestionarios set descripcion=?,fechaCreacion=?,usuarioCreador=? where idcuestionario=?',[descripcion,fechaCreacion,usuarioCreador,id],(err,result)=>{
 		if(err)throw err;
 		res.send(result);
 	});
@@ -122,8 +122,8 @@ app.post('/api/preguntas',(req,res)=>{
 			res.send('pregunta eliminada');
 		});
 	});
-	app.set("port",process.env.PORT|| 3000);
+	
 	app.listen(app.get("port"),err=>{
 		if(err) throw err;
-		console.log ('Funciona');
+		console.log (`Funciona en el puerto: 3000`);
 	});
