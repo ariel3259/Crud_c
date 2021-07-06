@@ -3,7 +3,7 @@ const mysql= require('mysql');
 const cors=require('cors');
 const app=express();
 app.use(express.json());
-app.use(cors(),express());
+app.use(cors());
 app.set("port",process.env.PORT || 3000);
 
 //conexion a mysql
@@ -20,7 +20,7 @@ con.connect(err=>{
 
 app.get('/',(req,res)=>res.send('<h1>Ruta Inicio</h1>'))
 //crear cuestionario
-app.post('/api/cuestionarios',(req,res)=>{
+app.post('/api/cuestionarios/create',(req,res)=>{
 let data={
 		idcuestionario:req.body.idcuestionario,
 	fechaCreacion:req.body.fecha,
@@ -35,7 +35,7 @@ con.query(sql,data,err=>{
 });
 
 //mostrar todos los cuestionarios
-app.get('/api/cuestionarios',(req,res)=>{
+app.get('/api/cuestionarios/read',(req,res)=>{
 con.query('select * from cuestionarios',(err,filas)=>{
 if(err)throw err;
 res.send(filas);
@@ -44,7 +44,7 @@ res.send(filas);
 
 
 //mostrar un cuestionario
-app.get('/api/cuestionarios/:id',(req,res)=>{
+app.get('/api/cuestionarios/read/:id',(req,res)=>{
 	con.query(`select * from cuestionarios where idcuestionario=?`,[req.params.id],(err,fila)=>{
 		if(err)throw err;
 		res.send(fila);
@@ -52,7 +52,7 @@ app.get('/api/cuestionarios/:id',(req,res)=>{
 });
 
 //Editar un cuestionario
-app.put('/api/cuestionarios/:id',(res,req)=>{
+app.put('/api/cuestionarios/modify/:id',(res,req)=>{
 	let id=req.params.id;
 	let descripcion=req.body.descripcion;
 	let fechaCreacion=req.body.fecha;
@@ -64,7 +64,7 @@ app.put('/api/cuestionarios/:id',(res,req)=>{
 });
 
 //Borrar un cuestionario
-app.delete('/api/cuestionarios/:id',(req,res)=>{
+app.delete('/api/cuestionarios/delete/:id',(req,res)=>{
 	con.query('delete from cuestionarios where id=?',[req.params.id],err=>{
 		if(err)throw err;
 		res.send("Articulo Eliminado");
@@ -75,7 +75,7 @@ app.delete('/api/cuestionarios/:id',(req,res)=>{
 // PREGUNTAS 
 
 //crear pregunta
-app.post('/api/preguntas',(req,res)=>{
+app.post('/api/preguntas/create',(req,res)=>{
 	let data={
 		descripcion:req.body.descripcion,
 		pregunta:req.body.pregunta
@@ -88,7 +88,7 @@ app.post('/api/preguntas',(req,res)=>{
 	});
 	
 	//mostrar todas las preguntas
-	app.get('/api/preguntas',(req,res)=>{
+	app.get('/api/preguntas/read',(req,res)=>{
 	con.query('select * from preguntas',(err,filas)=>{
 	if(err)throw err;
  res.send(filas);
@@ -97,7 +97,7 @@ app.post('/api/preguntas',(req,res)=>{
 	
 	
 	//mostrar una pregunta
-	app.get('/api/preguntas/:id',(req,res)=>{
+	app.get('/api/preguntas/read/:id',(req,res)=>{
 		con.query(`select * from preguntas where idpregunta=?`,[req.params.id],(err,fila)=>{
 			if(err)throw err;
 			res.send(fila);
@@ -105,7 +105,7 @@ app.post('/api/preguntas',(req,res)=>{
 	});
 	
 	//Editar una pregunta
-	app.put('/api/preguntas/:id',(res,req)=>{
+	app.put('/api/preguntas/modify/:id',(res,req)=>{
 		let id=req.params.id;
 		let descripcion=req.body.descripcion;
 		let pregunta=req.body.pregunta;
@@ -116,7 +116,7 @@ app.post('/api/preguntas',(req,res)=>{
 	});
 	
 	//Borrar una pregunta
-	app.delete('/api/cuestionarios/:id',(req,res)=>{
+	app.delete('/api/cuestionarios/delete/:id',(req,res)=>{
 		con.query('delete from preguntas where id=?',[req.params.id],err=>{
 			if(err)throw err;
 			res.send('pregunta eliminada');
