@@ -66,14 +66,12 @@ function mostrarUnCuestionario(id){
 //Editar un cuestionario.Remplazar data por  [descripcion,fechaCreacion,usuarioCreador,idcuestionario] en caso de que la modificacion no funcione
 function modificarUnCuestionario(id,desc,fecha,usuario){
 	app.put(`/api/cuestionarios/modify/:${id}`,(res,req)=>{
-		const data=[
-			descripcion=desc,
-			fechaCreacion=fecha,
-			usuarioCreador=usuario,
-			id=id
-		];
-			
-		
+		const data={
+			descripcion:desc,
+			fechaCreacion:fecha,
+			usuarioCreador:usuario,
+			id:id
+		};
 		con.query('update cuestionarios set descripcion=?,fechaCreacion=?,usuarioCreador=? where idcuestionario=?',data,(err,result)=>{
 			if(err)throw err;
 			res.send(result);
